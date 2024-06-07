@@ -1,0 +1,59 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: localhost:4317
+      http:
+        endpoint: localhost:4318
+  mysql:
+    database: telem
+    endpoint: host.docker.internal:3306
+    username: root
+    password: mysecretpassword
+    collection_interval: 15s
+    initial_delay: 20s
+
+  # Data sources: metrics
+  # hostmetrics:
+  #   scrapers:
+  #     cpu:
+  #     disk:
+  #     filesystem:
+  #       metrics:
+  #         system.filesystem.utilization:
+  #             enabled: true
+  #     load:
+  #     memory:
+  #       metrics:
+  #         system.memory.utilization:
+  #           enabled: true
+  #     network:
+  #       metrics:
+  #         system.network.conntrack.count:
+  #           enabled: true
+  #         system.network.conntrack.max:
+  #           enabled: true
+  #     process:
+  #     processes:
+  #     paging:
+  #       metrics:
+  #         system.paging.utilization:
+  #           enabled: true
+
+processors:
+  batch:
+    timeout: 10s
+
+exporters:
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    send_timestamps: true  # Replace with your desired endpoint for Prometheus scraping
+  logging:
+    loglevel: debug
+
+service:
+  pipelines:
+    metrics:
+      receivers: [mysql]
+      processors: [batch]
+      exporters: [prometheus]

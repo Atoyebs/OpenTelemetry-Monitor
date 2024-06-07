@@ -1,0 +1,82 @@
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
+networks:
+  default:
+    name: telem-net
+    driver: bridge
+
+volumes:
+  mysql-data:
+  prometheus_data: {}
+
+services:
+
+  grafana:
+    image: grafana/grafana-enterprise:10.4.2
+    container_name: grafana
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    volumes:
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
+    depends_on:
+      - mysql
+    ports:
+      - 3000:3000
+    logging: *logging
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    volumes:
+      #make sure that there is a prometheus.yml file in the config/prometheus folder
+      - ./config/prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.enable-lifecycle'
+    ports:
+      - 9090:9090
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: telem
+      MYSQL_ROOT_PASSWORD: mysecretpassword
+    volumes:
+      - mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+
+  # OpenTelemetry Collector
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.100.0
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./config/opentelemetry/config.yaml:/etc/otelcol-config.yml
+    ports:
+      - 4317:4317
+      - 4318:4318
+      - 8889:8889
+    logging: *logging
+    depends_on:
+      - prometheus
+      - mysql
+      - grafana
