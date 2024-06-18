@@ -12,6 +12,19 @@ receivers:
     password: mysecretpassword
     collection_interval: 15s
     initial_delay: 20s
+    metrics:
+      mysql.client.network.io:
+        enabled: true
+      mysql.table.lock_wait.write.count:
+        enabled: true
+      mysql.query.slow.count:
+        enabled: true
+      mysql.connection.count:
+        enabled: true
+      mysql.commands:
+        enabled: true
+      mysql.connection.errors:
+        enabled: true
 
   # Data sources: metrics
   # hostmetrics:

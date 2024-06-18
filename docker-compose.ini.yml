@@ -1,4 +1,3 @@
-
 x-default-logging: &logging
   driver: "json-file"
   options:
@@ -16,7 +15,6 @@ volumes:
   prometheus_data: {}
 
 services:
-
   grafana:
     image: grafana/grafana-enterprise:10.4.2
     container_name: grafana
@@ -42,9 +40,9 @@ services:
       - prometheus_data:/prometheus
     restart: unless-stopped
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.enable-lifecycle'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
     ports:
       - 9090:9090
 
@@ -56,9 +54,36 @@ services:
       MYSQL_ROOT_PASSWORD: mysecretpassword
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./config/mysql:/docker-entrypoint-initdb.d
     restart: unless-stopped
     ports:
       - 3306:3306
+
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    container_name: mysql-exporter
+    command: "--config.my-cnf=/etc/.mysqld_exporter.cnf"
+    ports:
+      - 9104:9104
+    volumes:
+      - ./config/exporter/.my.cnf:/etc/.mysqld_exporter.cnf:ro
+
+    environment:
+      - DATA_SOURCE_NAME='exporter:exporterPass@(mysql:3306)/telem'
+      - collect.info_schema.tablestats=true
+      - collect.info_schema.userstats=true
+      - collect.info_schema.query_response_time=true
+      - collect.auto_increment.columns=true
+      - collect.binlog_size=true
+      - collect.perf_schema.eventsstatements=true
+      - collect.perf_schema.eventswaits=true
+      - collect.perf_schema.file_events=true
+      - collect.perf_schema.indexiowaits=true
+      - collect.perf_schema.tableiowaits=true
+      - collect.perf_schema.tablelocks=true
+    depends_on:
+      - mysql
+      - prometheus
 
   # OpenTelemetry Collector
   otelcol:
@@ -68,7 +93,7 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml" ]
+    command: ["--config=/etc/otelcol-config.yml"]
     volumes:
       - ./config/opentelemetry/config.yaml:/etc/otelcol-config.yml
     ports:
