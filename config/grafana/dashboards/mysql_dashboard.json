@@ -23,20 +23,63 @@
   "links": [],
   "panels": [
     {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "libraryPanel": {
+        "name": "Slow Queries (Rate - 1m)",
+        "uid": "fdp8bgwrtfu9sf"
+      },
+      "title": "Slow Queries (Rate - 1m)"
+    },
+    {
       "datasource": {
         "type": "prometheus",
         "uid": "PBFA97CFB590B2093"
       },
-      "description": "The number of hours the MySQL database has been running.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
-          "decimals": 1,
-          "fieldMinMax": false,
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Count (Total)",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [],
-          "noValue": "DB DOWN",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -49,10 +92,45 @@
                 "value": 80
               }
             ]
-          },
-          "unit": "hours"
+          }
         },
         "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", status=\"accepted\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Accepted (MySQLX)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", status=\"closed\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Closed (MySQLX)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", status=\"rejected\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Rejected (MySQLX)"
+              }
+            ]
+          },
           {
             "matcher": {
               "id": "byName",
@@ -61,7 +139,111 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Uptime"
+                "value": "Active (MySQL)"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "rate(mysql_mysqlx_connections_total[1m])",
+          "fullMetaSearch": false,
+          "includeNullMetadata": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "rate(mysql_connection_count_total[1m])",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "MySQL & MySQLX Connections (Total)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "Immediate: Represents the number of lock requests that were immediately granted without the requesting thread having to wait. WE WANT THIS TO BE HIGH\n\nWaited: Represents the number of lock requests where the requesting thread had to wait because the lock was already held by another transaction - WE WANT THIS TO BE LOW.\n",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": []
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", kind=\"immediate\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Immediate"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", kind=\"waited\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Waited"
               }
             ]
           }
@@ -71,29 +253,153 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 0
+        "y": 8
       },
-      "id": 1,
+      "id": 15,
       "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "center",
-        "orientation": "auto",
+        "displayLabels": ["percent", "name"],
+        "legend": {
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": true,
+          "values": ["percent"]
+        },
+        "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
-        "showPercentChange": false,
-        "text": {
-          "valueSize": 90
-        },
-        "textMode": "auto",
-        "wideLayout": true
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "rate(mysql_locks_total[1m])",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "MySQL Locks (Rate - 1m)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", kind=\"time\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Wait Time"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\", kind=\"waits\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Wait Frequency"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
       "targets": [
         {
           "datasource": {
@@ -102,7 +408,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "mysql_uptime_seconds_total / 3600",
+          "expr": "rate(mysql_row_locks_total[1m])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -112,8 +418,262 @@
           "useBackend": false
         }
       ],
-      "title": "Database Uptime (Hours)",
-      "type": "stat"
+      "title": "InnoDB Table Locks (Rate)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "One common cause of connection error is the lack of available connections.\n\nThis metric therefore shows the percentage of available connections",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "displayName": "connections used",
+          "fieldMinMax": false,
+          "mappings": [],
+          "noValue": "0%",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "light-orange",
+                "value": 60
+              },
+              {
+                "color": "dark-red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 11,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "text": {}
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "100 * mysql_global_status_threads_connected / mysql_global_variables_max_connections",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Available Connections Used (%)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "A graph to check the available number of open files in the database system.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "displayName": "Open Files (%)",
+          "mappings": [],
+          "noValue": "0%",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "light-orange",
+                "value": 60
+              },
+              {
+                "color": "dark-red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "id": 12,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "100 * (mysql_global_variables_innodb_open_files/mysql_global_variables_open_files_limit)",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Database System Open Files (%)",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "MySQL uses in-memory cache to optimize the disk read and write operations. A low hit rate in the cache will impact the performance of the database. This graph will give us the value of the open tables cache hit rate:",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "MySQL Instance"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "editorMode": "code",
+          "expr": "rate(mysql_global_status_table_open_cache_hits[1m]) /\n(rate(mysql_global_status_table_open_cache_hits[1m]) + rate(mysql_global_status_table_open_cache_misses[1m]))",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "Cache Hit Rate"
+        }
+      ],
+      "title": "Cache Hit Rate (per 1m)",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -163,8 +723,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -177,7 +736,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"aborted\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"aborted\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -189,7 +748,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"aborted_clients\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"aborted_clients\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -201,7 +760,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"accept\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"accept\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -213,7 +772,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"internal\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"internal\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -225,7 +784,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"locked\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"locked\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -237,7 +796,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"max_connections\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"max_connections\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -249,7 +808,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"peer_address\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"peer_address\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -261,7 +820,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"select\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"select\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -273,7 +832,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_connection_errors_total\", error=\"tcpwrap\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{error=\"tcpwrap\", instance=\"otelcol:8889\", job=\"otel-col\"}"
             },
             "properties": [
               {
@@ -288,7 +847,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 0
+        "y": 24
       },
       "id": 3,
       "options": {
@@ -312,7 +871,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "mysql_connection_errors_total",
+          "expr": "rate(mysql_connection_errors_total[1m])",
           "fullMetaSearch": false,
           "includeNullMetadata": false,
           "instant": false,
@@ -330,7 +889,7 @@
         "type": "prometheus",
         "uid": "PBFA97CFB590B2093"
       },
-      "description": "",
+      "description": "One of the main sources of errors in databases is connection errors. This metric mysql_global_status_connection_errors_total allows you to detect when the database is generating these errors",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -340,7 +899,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Bytes",
+            "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -353,7 +912,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -373,8 +932,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -387,36 +945,72 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_client_network_io_bytes_total\", instance=\"otelcol:8889\", job=\"otel-col\", kind=\"received\"}"
+              "options": "{error=\"accept\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Received"
+                "value": "Accepted"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_client_network_io_bytes_total\", instance=\"otelcol:8889\", job=\"otel-col\", kind=\"sent\"}"
+              "options": "{error=\"internal\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Sent"
+                "value": "Internal"
               }
             ]
           },
           {
             "matcher": {
-              "id": "byType",
-              "options": "number"
+              "id": "byName",
+              "options": "{error=\"max_connections\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
             },
             "properties": [
               {
-                "id": "unit",
-                "value": "decbytes"
+                "id": "displayName",
+                "value": "Max"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{error=\"peer_address\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Peer Address"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{error=\"select\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Select"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{error=\"tcpwrap\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "TCP Wrap"
               }
             ]
           }
@@ -426,9 +1020,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 8
+        "y": 32
       },
-      "id": 8,
+      "id": 10,
       "options": {
         "legend": {
           "calcs": [],
@@ -447,19 +1041,15 @@
             "type": "prometheus",
             "uid": "PBFA97CFB590B2093"
           },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "mysql_client_network_io_bytes_total",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
+          "editorMode": "code",
+          "expr": "rate(mysql_global_status_connection_errors_total[5m])",
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "A",
-          "useBackend": false
+          "refId": "A"
         }
       ],
-      "title": "Network Bytes",
+      "title": "DB Connection Errors (Rate)",
       "type": "timeseries"
     },
     {
@@ -510,8 +1100,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -575,7 +1164,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 8
+        "y": 32
       },
       "id": 2,
       "options": {
@@ -626,7 +1215,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Count",
+            "axisLabel": "Bytes",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -659,8 +1248,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -673,48 +1261,36 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_commands_total\", command=\"delete\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{__name__=\"mysql_client_network_io_bytes_total\", instance=\"otelcol:8889\", job=\"otel-col\", kind=\"received\"}"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Delete"
+                "value": "Received"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_commands_total\", command=\"insert\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "options": "{__name__=\"mysql_client_network_io_bytes_total\", instance=\"otelcol:8889\", job=\"otel-col\", kind=\"sent\"}"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Insert"
+                "value": "Sent"
               }
             ]
           },
           {
             "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"mysql_commands_total\", command=\"select\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+              "id": "byType",
+              "options": "number"
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "Select"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"mysql_commands_total\", command=\"update\", instance=\"otelcol:8889\", job=\"otel-col\"}"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Update"
+                "id": "unit",
+                "value": "decbytes"
               }
             ]
           }
@@ -724,9 +1300,9 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 16
+        "y": 40
       },
-      "id": 7,
+      "id": 8,
       "options": {
         "legend": {
           "calcs": [],
@@ -747,7 +1323,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "mysql_commands_total",
+          "expr": "mysql_client_network_io_bytes_total",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -757,7 +1333,7 @@
           "useBackend": false
         }
       ],
-      "title": "MySQL Commands",
+      "title": "Network Bytes",
       "type": "timeseries"
     },
     {
@@ -808,8 +1384,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -861,7 +1436,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 40
       },
       "id": 5,
       "options": {
@@ -895,6 +1470,154 @@
         }
       ],
       "title": "InnoDB Operations",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "Count",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{command=\"delete\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Delete"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{command=\"insert\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Insert"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{command=\"select\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Select"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{command=\"update\", instance=\"otelcol:8889\", job=\"otel-col\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Update"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 48
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "rate(mysql_commands_total[1m])",
+          "fullMetaSearch": false,
+          "includeNullMetadata": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "MySQL Commands",
       "type": "timeseries"
     },
     {
@@ -944,8 +1667,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1020,8 +1742,8 @@
       "gridPos": {
         "h": 8,
         "w": 12,
-        "x": 0,
-        "y": 24
+        "x": 12,
+        "y": 48
       },
       "id": 6,
       "options": {
@@ -1079,17 +1801,107 @@
         "type": "prometheus",
         "uid": "PBFA97CFB590B2093"
       },
-      "description": "",
+      "description": "The number of hours the MySQL database has been running.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "fieldMinMax": false,
+          "mappings": [],
+          "noValue": "DB DOWN",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "hours"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "{instance=\"otelcol:8889\", job=\"otel-col\"}"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Uptime"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 56
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {
+          "valueSize": 90
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "PBFA97CFB590B2093"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "mysql_uptime_seconds_total / 3600",
+          "fullMetaSearch": false,
+          "includeNullMetadata": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Database Uptime (Hours)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
+      },
+      "description": "A graph to show when the Database has been up (reachable).\n\nWhen the DB is reachable/up, the y-axis should equal to 1\nWhen the DB is not-reachable/down, the y-axis should equal to 0",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
-            "axisBorderShow": false,
+            "axisBorderShow": true,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "Count (Total)",
+            "axisLabel": "On/Off",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "drawStyle": "line",
@@ -1102,8 +1914,8 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 3,
+            "lineWidth": 1,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -1122,8 +1934,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1136,48 +1947,12 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "{__name__=\"mysql_mysqlx_connections_total\", instance=\"otelcol:8889\", job=\"otel-col\", status=\"accepted\"}"
+              "options": "{__name__=\"mysql_up\", instance=\"mysql-exporter:9104\", job=\"mysql-exporter\"}"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Accepted (MySQLX)"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"mysql_mysqlx_connections_total\", instance=\"otelcol:8889\", job=\"otel-col\", status=\"closed\"}"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Closed (MySQLX)"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"mysql_mysqlx_connections_total\", instance=\"otelcol:8889\", job=\"otel-col\", status=\"rejected\"}"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Rejected (MySQLX)"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "{__name__=\"mysql_connection_count_total\", instance=\"otelcol:8889\", job=\"otel-col\"}"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Active (MySQL)"
+                "value": "MySQL Instance"
               }
             ]
           }
@@ -1187,9 +1962,9 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 56
       },
-      "id": 4,
+      "id": 9,
       "options": {
         "legend": {
           "calcs": [],
@@ -1210,7 +1985,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "mysql_mysqlx_connections_total",
+          "expr": "mysql_up",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "instant": false,
@@ -1218,26 +1993,9 @@
           "range": true,
           "refId": "A",
           "useBackend": false
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
-          },
-          "disableTextWrap": false,
-          "editorMode": "builder",
-          "expr": "mysql_connection_count_total",
-          "fullMetaSearch": false,
-          "hide": false,
-          "includeNullMetadata": true,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B",
-          "useBackend": false
         }
       ],
-      "title": "MySQL & MySQLX Connections (Total)",
+      "title": "Database Uptime (Graph)",
       "type": "timeseries"
     }
   ],
@@ -1247,13 +2005,13 @@
     "list": []
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "MySQL Metrics",
   "uid": "ddo3sa9h607i8d",
-  "version": 19,
+  "version": 13,
   "weekStart": ""
 }

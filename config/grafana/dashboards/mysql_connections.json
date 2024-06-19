@@ -1,0 +1,110 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "panels": [
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "libraryPanel": {
+        "name": "Available Connections Used (%)",
+        "uid": "bdp8c1n3ja6tcf"
+      },
+      "title": "Available Connections Used (%)"
+    },
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 6,
+      "libraryPanel": {
+        "name": "MySQL Connection Errors (Total)",
+        "uid": "fdp8c2sjy483kd"
+      },
+      "title": "MySQL Connection Errors (Total)"
+    },
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 10,
+      "libraryPanel": {
+        "name": "MySQL Threads",
+        "uid": "bdp8c3k34bri8f"
+      },
+      "title": "MySQL Threads"
+    },
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 4,
+      "libraryPanel": {
+        "name": "DB Connection Errors (Rate)",
+        "uid": "adp8c33vw191ce"
+      },
+      "title": "DB Connection Errors (Rate)"
+    },
+    {
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 8,
+      "libraryPanel": {
+        "name": "MySQL & MySQLX Connections (Total)",
+        "uid": "bdp8c09w7abk0d"
+      },
+      "title": "MySQL & MySQLX Connections (Total)"
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "MySQL Connections Dashboard",
+  "uid": "ddp8cjxsev9j4e",
+  "version": 1,
+  "weekStart": ""
+}
